@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for running R on Lambda via rpy2 and lambdr 
+
+Globals: 
+  Function: 
+    MemorySize: 512
+    Timeout: 15
+
+Resources:
+  RPy2Function:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: r-lambda-demo-rpy2
+      PackageType: Image
+      ImageConfig: 
+        Command: ["app.lambda_handler"]
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./rpy2
+      DockerTag: python3.9-rpy2
+  LambdRFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: r-lambda-demo-lambdr
+      PackageType: Image
+      ImageConfig: 
+        Command: ["parity"]
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./lambdr
+      DockerTag: lambdr
