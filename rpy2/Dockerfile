@@ -1,6 +1,6 @@
-FROM public.ecr.aws/lambda/python:3.9
+FROM public.ecr.aws/lambda/python:3.10
 
-ENV R_VERSION=4.2.1
+ENV R_VERSION=4.3.1
 
 RUN yum -y install wget git tar openssl-devel libxml2-devel \
   && yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
@@ -13,7 +13,8 @@ RUN yum -y install wget git tar openssl-devel libxml2-devel \
 ENV PATH="${PATH}:/opt/R/${R_VERSION}/bin/" 
 ENV LD_LIBRARY_PATH="/opt/R/${R_VERSION}/lib/R/lib/" 
 
-RUN R -e "install.packages(c('aws.s3', 'dplyr'), repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('aws.s3', 'dplyr'), \
+  repos = c(CRAN = 'https://packagemanager.posit.co/cran/__linux__/centos7/latest'))"
 
 COPY requirements.txt  .
 RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
